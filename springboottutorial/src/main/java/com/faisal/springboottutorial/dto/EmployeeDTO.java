@@ -12,6 +12,9 @@ public class EmployeeDTO {
     private LocalDate dateOfJoining;
     private boolean isActive;
 
+    public EmployeeDTO() {
+    }
+
     public Long getId() {
         return id;
     }

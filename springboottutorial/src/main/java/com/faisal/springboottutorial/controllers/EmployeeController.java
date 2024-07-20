@@ -3,6 +3,7 @@ package com.faisal.springboottutorial.controllers;
 import com.faisal.springboottutorial.dto.EmployeeDTO;
 import com.faisal.springboottutorial.entities.EmployeeEntity;
 import com.faisal.springboottutorial.repositories.EmployeeRespository;
+import com.faisal.springboottutorial.services.EmployeeService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -17,23 +18,23 @@ public class EmployeeController {
 //        return "Secret Message: Work hard until you succeed";
 //    }
 
-    private final EmployeeRespository employeeRespository;
+    private final EmployeeService employeeService;
 
-    public EmployeeController(EmployeeRespository employeeRespository) {
-        this.employeeRespository = employeeRespository;
+    public EmployeeController(EmployeeService employeeService) {
+        this.employeeService = employeeService;
     }
 
     @GetMapping(path="/{employeeId}")
-    public EmployeeEntity getEmployeeById(@PathVariable(name = "employeeId") Long id){
-        return employeeRespository.findById(id).orElse(null);
+    public EmployeeDTO getEmployeeById(@PathVariable(name = "employeeId") Long id){
+        return employeeService.getEmployeeById(id);
     }
     @GetMapping
-    public List<EmployeeEntity> getAllEmployee(@RequestParam(required = false) Integer age, @RequestParam(required = false) String sortBy){
-        return employeeRespository.findAll();
+    public List<EmployeeDTO> getAllEmployee(@RequestParam(required = false) Integer age, @RequestParam(required = false) String sortBy){
+        return employeeService.getAllEmployee();
     }
     @PostMapping
-    public EmployeeEntity createNewEmployee(@RequestBody EmployeeEntity employeeDTO){
-        return employeeRespository.save(employeeDTO);
+    public EmployeeDTO createNewEmployee(@RequestBody EmployeeDTO employeeDTO){
+        return employeeService.creatNewEmployee(employeeDTO);
     }
     @PutMapping(path="/{id}")
     public String updateEmployeeId(@PathVariable Long id){
