@@ -1,10 +1,7 @@
 package com.faisal.springboottutorial.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 import java.time.LocalDate;
@@ -14,6 +11,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public class EmployeeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,6 +19,9 @@ public class EmployeeEntity {
     private String name;
     private String email;
     private Integer age;
+    private String role;
+    private double salary;
+
     private LocalDate dateOfJoining;
     private boolean isActive;
 }

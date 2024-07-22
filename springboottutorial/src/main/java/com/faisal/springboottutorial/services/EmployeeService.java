@@ -4,9 +4,14 @@ import com.faisal.springboottutorial.dto.EmployeeDTO;
 import com.faisal.springboottutorial.entities.EmployeeEntity;
 import com.faisal.springboottutorial.repositories.EmployeeRespository;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.util.ReflectionUtils;
 import org.springframework.stereotype.Service;
 
+
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,9 +26,10 @@ public class EmployeeService {
         this.modelmapper = modelmapper;
     }
 
-    public EmployeeDTO getEmployeeById(Long id) {
-        EmployeeEntity employeeEntity= employeeRespository.findById(id).orElse(null);
-        return modelmapper.map(employeeEntity, EmployeeDTO.class);
+    public Optional<EmployeeDTO> getEmployeeById(Long id) {
+       return employeeRespository.findById(id).map(employeeEntity ->
+           modelmapper.map(employeeEntity, EmployeeDTO.class)
+       );
     }
 
     public List<EmployeeDTO> getAllEmployee() {
@@ -36,5 +42,37 @@ public class EmployeeService {
     public EmployeeDTO creatNewEmployee(EmployeeDTO employeeDTO) {
         EmployeeEntity employeeEntity= employeeRespository.save(modelmapper.map(employeeDTO,EmployeeEntity.class));
         return modelmapper.map(employeeEntity,EmployeeDTO.class);
+    }
+
+    public EmployeeDTO updateEmployeeid(Long id, EmployeeDTO employeeDTO) {
+        EmployeeEntity employeeEntity= modelmapper.map(employeeDTO,EmployeeEntity.class);
+        employeeEntity.setId(id);
+        EmployeeEntity saveEmployeeEntity=employeeRespository.save(employeeEntity);
+
+        return modelmapper.map(saveEmployeeEntity,EmployeeDTO.class);
+    }
+
+    public String deleteEmployeeById(Long id) {
+        boolean exists=employeeRespository.existsById(id);
+        if(exists){
+            employeeRespository.deleteById(id);
+            return "employee deleted successfully";
+        }
+        return "employee does not exists in our db";
+
+    }
+
+    public EmployeeDTO patchEmployeeById(Map<String, Object> updates, Long id) {
+        System.out.println(updates);
+        boolean exists=employeeRespository.existsById(id);
+        if(!exists) return null;
+        EmployeeEntity employeeEntity= employeeRespository.findById(id).get();
+        updates.forEach((field,value)->{
+           Field fieldToBeUpdated= ReflectionUtils.findRequiredField(EmployeeEntity.class,field);
+           fieldToBeUpdated.setAccessible(true);
+           ReflectionUtils.setField(fieldToBeUpdated,employeeEntity,value);
+        });
+        System.out.println(employeeEntity);
+        return modelmapper.map(employeeRespository.save(employeeEntity), EmployeeDTO.class);
     }
 }
