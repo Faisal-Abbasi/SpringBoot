@@ -1,7 +1,10 @@
 package com.faisal.springboottutorial.controllers;
 
 import com.faisal.springboottutorial.dto.EmployeeDTO;
+import com.faisal.springboottutorial.exception.ResourceNotFound;
 import com.faisal.springboottutorial.services.EmployeeService;
+import jakarta.validation.Valid;
+import org.apache.catalina.connector.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -25,14 +29,19 @@ public class EmployeeController {
     @GetMapping(path="/{employeeId}")
     public ResponseEntity<EmployeeDTO> getEmployeeById(@PathVariable(name = "employeeId") Long id){
         Optional<EmployeeDTO> employeeDTO= employeeService.getEmployeeById(id);
-        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+    //    return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElse(ResponseEntity.notFound().build());
+        return employeeDTO.map(employeeDTO1 -> ResponseEntity.ok(employeeDTO1)).orElseThrow(()->new ResourceNotFound("Resource Not found"));
     }
+//    @ExceptionHandler(NoSuchElementException.class)
+//    public ResponseEntity<String> handleEmployeeNotFound(NoSuchElementException exception){
+//        return new ResponseEntity<>(exception.getMessage(),HttpStatus.NOT_FOUND);
+//    }
     @GetMapping
     public ResponseEntity< List<EmployeeDTO>> getAllEmployee(@RequestParam(required = false) Integer age, @RequestParam(required = false) String sortBy){
         return ResponseEntity.ok(employeeService.getAllEmployee());
     }
     @PostMapping
-    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody EmployeeDTO employeeDTO){
+    public ResponseEntity<EmployeeDTO> createNewEmployee(@RequestBody @Valid EmployeeDTO employeeDTO){
         EmployeeDTO employeeDTO1=employeeService.creatNewEmployee(employeeDTO);
         return new ResponseEntity<>(employeeDTO1, HttpStatus.CREATED);
     }

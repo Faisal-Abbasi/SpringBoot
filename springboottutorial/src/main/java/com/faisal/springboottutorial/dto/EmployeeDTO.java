@@ -1,6 +1,8 @@
 package com.faisal.springboottutorial.dto;
 
 import com.faisal.springboottutorial.annotations.EmployeeRoleValidation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -36,7 +38,7 @@ public class EmployeeDTO {
     @EmployeeRoleValidation
     private String role;
 
-    @NotNull(message="Salary of the employee cannot be blank")
+    //@NotNull(message="Salary of the employee cannot be blank")
     @Positive(message="Salary of Employee should be positive")
     @Digits(integer=6, fraction=2, message= "The salary can be in the form XXXXX.YY")
     @DecimalMax(value="100000.99")
@@ -46,7 +48,8 @@ public class EmployeeDTO {
     @PastOrPresent(message="Date of Joining field in employee cannot be in future")
     private LocalDate dateOfJoining;
 
-    @AssertTrue(message="Employee should be active")
+   @AssertTrue(message="Employee should be active")
+    @JsonProperty("isActive")
     private boolean isActive;
 
 

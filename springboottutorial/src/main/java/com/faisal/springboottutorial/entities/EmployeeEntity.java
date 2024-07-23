@@ -1,5 +1,6 @@
 package com.faisal.springboottutorial.entities;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
@@ -21,7 +22,7 @@ public class EmployeeEntity {
     private Integer age;
     private String role;
     private double salary;
-
     private LocalDate dateOfJoining;
+    @JsonProperty("isActive")
     private boolean isActive;
 }
